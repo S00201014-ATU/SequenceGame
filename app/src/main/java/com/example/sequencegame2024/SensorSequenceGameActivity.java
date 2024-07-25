@@ -10,10 +10,10 @@ import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,7 +34,10 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     private MediaPlayer soundGameOver;
 
     private TextView tvScore;
+    private ImageView arrowUp, arrowDown, arrowLeft, arrowRight;
     private boolean userTurn = false;
+
+    private float[] initialCoordinates = new float[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,11 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        tvScore = findViewById(R.id.scoreTextView);
+        tvScore = findViewById(R.id.tvScore);
+        arrowUp = findViewById(R.id.arrowUp);
+        arrowDown = findViewById(R.id.arrowDown);
+        arrowLeft = findViewById(R.id.arrowLeft);
+        arrowRight = findViewById(R.id.arrowRight);
 
         // Initialize media players for sound effects
         soundLevelComplete = MediaPlayer.create(this, R.raw.level_complete);
@@ -79,21 +86,21 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     }
 
     private void handleAccelerometer(float[] values) {
-        float x = values[0];
-        float y = values[1];
+        float y = values[1] - initialCoordinates[1];
+        float z = values[2] - initialCoordinates[2];
 
         String direction = null;
 
-        if (Math.abs(x) > Math.abs(y)) {
-            if (x < -3) {
+        if (Math.abs(y) > Math.abs(z)) {
+            if (y < -3) {
                 direction = "Right";
-            } else if (x > 3) {
+            } else if (y > 3) {
                 direction = "Left";
             }
         } else {
-            if (y < -3) {
+            if (z > 11) {
                 direction = "Up";
-            } else if (y > 3) {
+            } else if (z < 9) {
                 direction = "Down";
             }
         }
@@ -134,8 +141,12 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         playerSequence.clear();
 
         // Add two new random directions to the game sequence
-        gameSequence.add(randomDirection());
-        gameSequence.add(randomDirection());
+        for (int i = 0; i < 2; i++) {
+            gameSequence.add(randomDirection());
+        }
+
+        // Reset initial coordinates to the current position
+        resetInitialCoordinates();
 
         // Show the sequence to the player
         showSequence();
@@ -174,8 +185,41 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     }
 
     private void highlightDirection(String direction) {
-        // Update this method to handle the visual feedback for the direction
-        // For example, you might change the background color of a TextView based on direction
-        tvScore.setText(direction);
+        final ImageView arrowView;
+
+        switch (direction) {
+            case "Up":
+                arrowView = arrowUp;
+                break;
+            case "Down":
+                arrowView = arrowDown;
+                break;
+            case "Left":
+                arrowView = arrowLeft;
+                break;
+            case "Right":
+                arrowView = arrowRight;
+                break;
+            default:
+                arrowView = null;
+                break;
+        }
+
+        if (arrowView != null) {
+            arrowView.setColorFilter(Color.WHITE);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    arrowView.clearColorFilter();
+                }
+            }, 500);
+        }
+    }
+
+    private void resetInitialCoordinates() {
+        // The initial coordinates should be set to the current sensor values
+        initialCoordinates[0] = 0;
+        initialCoordinates[1] = 0;
+        initialCoordinates[2] = 0;
     }
 }

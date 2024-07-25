@@ -2,33 +2,55 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/directionTextView"
+        android:id="@+id/tvScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Direction"
-        android:textSize="32sp"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:id="@+id/scoreTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:text="Score: 0"
         android:textSize="24sp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:textColor="@android:color/black" />
 
-    <Button
-        android:id="@+id/startButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:layout_alignParentBottom="true"
+    <ImageView
+        android:id="@+id/arrowUp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp" />
+        android:layout_below="@id/tvScore"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/arrow_up"
+        android:contentDescription="Up Arrow" />
+
+    <ImageView
+        android:id="@+id/arrowDown"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/arrowUp"
+        android:layout_marginTop="150dp"
+        android:src="@drawable/arrow_down"
+        android:contentDescription="Down Arrow" />
+
+    <ImageView
+        android:id="@+id/arrowLeft"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/tvScore"
+        android:layout_marginTop="100dp"
+        android:layout_toLeftOf="@id/arrowUp"
+        android:src="@drawable/arrow_left"
+        android:contentDescription="Left Arrow" />
+
+    <ImageView
+        android:id="@+id/arrowRight"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/tvScore"
+        android:layout_marginTop="100dp"
+        android:layout_toRightOf="@id/arrowUp"
+        android:src="@drawable/arrow_right"
+        android:contentDescription="Right Arrow" />
 </RelativeLayout>
