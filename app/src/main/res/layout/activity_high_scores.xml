@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- TextView to display the title of the screen -->
+<TextView
+android:id="@+id/tvTitle"
+android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="High Scores"
+    android:textSize="32sp"
+    android:textStyle="bold"
+    android:layout_marginBottom="20dp" />
+
+    <!-- ScrollView to allow scrolling of high scores if they exceed the screen height -->
+<ScrollView
+android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1">
+
+    <!-- LinearLayout to hold the list of high scores -->
+<LinearLayout
+android:id="@+id/layoutScores"
+android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+    </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Button to navigate back to the home screen -->
+<Button
+android:id="@+id/btnHome"
+android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Home"
+    android:layout_marginTop="8dp" />
+
+    </LinearLayout>
