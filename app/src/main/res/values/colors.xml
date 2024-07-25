@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Define the colour black -->
     <color name="black">#FF000000</color>
+    <!-- Define the colour white -->
     <color name="white">#FFFFFFFF</color>
+    <!-- Define the colour red -->
+    <color name="red">#E84040</color>
+    <!-- Define the colour green -->
+    <color name="green">#47F047</color>
+    <!-- Define the colour blue -->
+    <color name="blue">#5454F0</color>
+    <!-- Define the colour yellow -->
+    <color name="yellow">#E5E55F</color>
 </resources>
