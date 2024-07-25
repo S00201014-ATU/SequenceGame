@@ -1,6 +1,80 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="UTF-8" ?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- TextView to display the score at the top of the screen -->
+    <TextView
+        android:id="@+id/tvScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Score: 0"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"/>
+
+    <!-- GridLayout for arranging buttons in a 2x2 grid -->
+    <GridLayout
+        android:id="@+id/glGameArea"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tvScore"
+        android:rowCount="2"
+        android:columnCount="2">
+
+        <!-- Button with a green background, positioned in the top-left cell of the grid -->
+        <Button
+            android:id="@+id/btnGreen"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/green"
+            android:textStyle="bold"
+            android:textColor="#000000"/>
+
+        <!-- Button with a blue background, positioned in the top-right cell of the grid -->
+        <Button
+            android:id="@+id/btnBlue"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/blue"
+            android:textStyle="bold"
+            android:textColor="#000000"/>
+
+        <!-- Button with a yellow background, positioned in the bottom-left cell of the grid -->
+        <Button
+            android:id="@+id/btnYellow"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/yellow"
+            android:textStyle="bold"
+            android:textColor="#000000"/>
+
+        <!-- Button with a red background, positioned in the bottom-right cell of the grid -->
+        <Button
+            android:id="@+id/btnRed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:backgroundTint="@color/red"
+            android:textStyle="bold"
+            android:textColor="#000000"/>
+
+    </GridLayout>
+
+</RelativeLayout>
