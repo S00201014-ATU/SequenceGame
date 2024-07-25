@@ -28,6 +28,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Method to handle the click event for starting the touch game
+    public void startRotateGame (View view) {
+        // Create an Intent to start the TouchSequenceGameActivity
+        Intent intent = new Intent(this, SensorSequenceGameActivity.class);
+        // Start the activity defined in the intent
+        startActivity(intent);
+    }
+
+    // Method to handle the click event for starting the touch game
     public void startTouchGame(View view) {
         // Create an Intent to start the TouchSequenceGameActivity
         Intent intent = new Intent(this, TouchSequenceGameActivity.class);

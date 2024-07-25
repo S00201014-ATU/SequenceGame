@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
     <!-- Features for sensors -->
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
@@ -48,6 +49,10 @@
 
         <activity
             android:name=".GameOverActivity"
+            android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
+
+        <activity
+            android:name=".SensorSequenceGameActivity"
             android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
 
     </application>

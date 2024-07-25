@@ -17,9 +17,18 @@
             android:id="@+id/btnStartTouchGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Start Game"
+            android:text="Start Touch Game"
             android:layout_marginBottom="20dp"
             android:onClick="startTouchGame" />
+
+        <!-- Button to start the rotate game -->
+        <Button
+            android:id="@+id/btnStartRotateGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start Rotate Game"
+            android:layout_marginBottom="20dp"
+            android:onClick="startRotateGame" />
 
         <!-- Button to view high scores -->
         <Button
