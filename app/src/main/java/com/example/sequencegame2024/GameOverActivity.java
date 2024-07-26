@@ -1,107 +1,75 @@
 package com.example.sequencegame2024;
 
-import android.content.Context;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 
 public class GameOverActivity extends AppCompatActivity {
 
+    // Variable to hold the player's score
     private int score;
+    // Helper to manage database creation and version management
+    private DatabaseHelper dbHelper;
+    // Reference to the SQLite database
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
 
-        // Get the score from the intent
+        // Create a new DatabaseHelper instance
+        dbHelper = new DatabaseHelper(this);
+        // Get a writable database
+        db = dbHelper.getWritableDatabase();
+
+        // Get the score from the Intent
         score = getIntent().getIntExtra("score", 0);
 
+        // Find the TextView for displaying the score
         TextView scoreView = findViewById(R.id.tvScore);
+        // Set the score text
         scoreView.setText("Your Score: " + score);
 
+        // Find the Button for saving the score
         Button saveScoreButton = findViewById(R.id.btnSaveScore);
         saveScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Call the method to save the high score when the button is clicked
                 saveHighScore();
             }
         });
     }
 
     private void saveHighScore() {
+        // Find the EditText for entering the player's name
         EditText nameInput = findViewById(R.id.etName);
+        // Get the name from the EditText
         String playerName = nameInput.getText().toString();
 
-        SharedPreferences prefs = getSharedPreferences("highscores", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+        // Create a new ContentValues object
+        ContentValues values = new ContentValues();
+        // Add the player's name to the ContentValues
+        values.put(DatabaseHelper.COLUMN_NAME, playerName);
+        // Add the score to the ContentValues
+        values.put(DatabaseHelper.COLUMN_SCORE, score);
 
-        List<HighScore> highScores = new ArrayList<>();
+        // Insert the values into the high scores table
+        db.insert(DatabaseHelper.TABLE_HIGHSCORES, null, values);
 
-        // Load existing scores
-        for (int i = 0; i < 5; i++) {
-            String player = prefs.getString("player" + i, null);
-            int score = prefs.getInt("score" + i, 0);
-            if (player != null) {
-                highScores.add(new HighScore(score, player));
-            }
-        }
-
-        // Add new score
-        highScores.add(new HighScore(score, playerName));
-
-        // Sort the scores by score descending and by name ascending
-        Collections.sort(highScores, new Comparator<HighScore>() {
-            @Override
-            public int compare(HighScore o1, HighScore o2) {
-                int scoreCompare = Integer.compare(o2.getScore(), o1.getScore());
-                if (scoreCompare == 0) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-                return scoreCompare;
-            }
-        });
-
-        // Save top 5 scores
-        for (int i = 0; i < highScores.size() && i < 5; i++) {
-            HighScore highScore = highScores.get(i);
-            editor.putString("player" + i, highScore.getName());
-            editor.putInt("score" + i, highScore.getScore());
-        }
-
-        editor.apply();
-
-        // Navigate to HighScoresActivity
+        // Create an Intent to start the HighScoresActivity
         Intent intent = new Intent(GameOverActivity.this, HighScoresActivity.class);
+        // Start the HighScoresActivity
         startActivity(intent);
+        // Finish the current activity
         finish();
-    }
-
-    private class HighScore {
-        private int score;
-        private String name;
-
-        public HighScore(int score, String name) {
-            this.score = score;
-            this.name = name;
-        }
-
-        public int getScore() {
-            return score;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 }
