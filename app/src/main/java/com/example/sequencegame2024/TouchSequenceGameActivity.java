@@ -13,54 +13,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-// Activity class for handling the touch sequence game
 public class TouchSequenceGameActivity extends AppCompatActivity {
 
-    // Declare buttons and text view for UI components
     private Button btnRed, btnGreen, btnBlue, btnYellow;
     private TextView tvScore;
 
-    // Lists to hold the game sequence and player's sequence
     private List<Integer> gameSequence = new ArrayList<>();
     private List<Integer> playerSequence = new ArrayList<>();
 
-    // Index for keeping track of the current position in the sequence
     private int index = 0;
 
-    // Random number generator for creating game sequences
     private Random random = new Random();
 
-    // Handler for scheduling tasks
     private Handler handler = new Handler();
 
-    // MediaPlayer instances for sound effects
     private MediaPlayer soundLevelComplete;
     private MediaPlayer soundWrongAnswer;
     private MediaPlayer soundGameOver;
 
-    // Variables for scoring
     private int score = 0;
+    private int initialPoints = 4;
     private int pointsPerRound = 2;
+    private int roundNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the layout for this activity
+        // Set the layout for the screen
         setContentView(R.layout.activity_touch_sequence_game);
 
-        // Initialise buttons and text view
+        // Find buttons and text view in the layout
         btnRed = findViewById(R.id.btnRed);
         btnGreen = findViewById(R.id.btnGreen);
         btnBlue = findViewById(R.id.btnBlue);
         btnYellow = findViewById(R.id.btnYellow);
         tvScore = findViewById(R.id.tvScore);
 
-        // Initialise media players for sound effects
+        // Set up the sounds
         soundLevelComplete = MediaPlayer.create(this, R.raw.level_complete);
         soundWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
         soundGameOver = MediaPlayer.create(this, R.raw.game_over);
 
-        // Set onClick listeners for buttons
+        // Define what happens when each button is clicked
         btnRed.setOnClickListener(v -> playerMove(0));
         btnGreen.setOnClickListener(v -> playerMove(1));
         btnBlue.setOnClickListener(v -> playerMove(2));
@@ -70,28 +64,38 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
         startNewRound();
     }
 
-    // Method to start a new round in the game
+    // Starts a new round of the game
     private void startNewRound() {
         // Clear the player's sequence for the new round
         playerSequence.clear();
 
-        // Add two new random colours to the game sequence
-        gameSequence.add(random.nextInt(4));
-        gameSequence.add(random.nextInt(4));
+        // If it's the first round, add four random colours to the game sequence
+        if (roundNumber == 0) {
+            for (int i = 0; i < 4; i++) {
+                gameSequence.add(random.nextInt(4));
+            }
+        } else {
+            // For later rounds, add two new random colours
+            for (int i = 0; i < 2; i++) {
+                gameSequence.add(random.nextInt(4));
+            }
+        }
 
-        // Play the sequence for the player to follow
+        // Increase the round number
+        roundNumber++;
+
+        // Show the sequence of buttons to the player
         playSequence();
     }
 
-    // Method to play the game sequence with visual feedback
+    // Plays the sequence of button presses to the player
     private void playSequence() {
-        // Reset the index for tracking the sequence
         index = 0;
 
-        // Schedule tasks to highlight buttons in sequence
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                // Check if there are more buttons to show
                 if (index < gameSequence.size()) {
                     // Highlight the current button in the sequence
                     highlightButton(gameSequence.get(index));
@@ -99,14 +103,14 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
                     // Move to the next button in the sequence
                     index++;
 
-                    // Schedule the next button highlight after 1 second
+                    // Show the next button after 1 second
                     handler.postDelayed(this, 1000);
                 }
             }
         }, 1000);
     }
 
-    // Method to highlight a button based on its colour
+    // Highlights a button by changing its colour
     private void highlightButton(int colour) {
         Button btn = null;
         switch (colour) {
@@ -126,11 +130,11 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
 
         if (btn != null) {
             final Button btnFinal = btn;
-            // Temporarily change the button's background colour to white
+            // Temporarily change the button's colour to white
             btn.setBackgroundColor(Color.WHITE);
-            // Change the button's background colour back to its original colour after 500 milliseconds
+            // Change it back to its original colour after 500 milliseconds
             handler.postDelayed(() -> {
-                if(btnFinal == btnRed) {
+                if (btnFinal == btnRed) {
                     btnFinal.setBackgroundColor(Color.RED);
                 } else if (btnFinal == btnGreen) {
                     btnFinal.setBackgroundColor(Color.GREEN);
@@ -143,34 +147,39 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
         }
     }
 
-    // Method to handle the player's move
+    // Handles a player's move when a button is clicked
     private void playerMove(int colour) {
-        // Add the player's move to the sequence
+        // Add the player's move to their sequence
         playerSequence.add(colour);
 
-        // Check if the player's sequence is correct so far
+        // Check if the player's sequence matches the game's sequence so far
         if (playerSequence.size() <= gameSequence.size()) {
             // Check if the most recent move is correct
             if (playerSequence.get(playerSequence.size() - 1).equals(gameSequence.get(playerSequence.size() - 1))) {
-                // If the player's sequence matches the game sequence
+                // If the player's sequence matches the game's sequence completely
                 if (playerSequence.size() == gameSequence.size()) {
-                    // Increase the score and update the display
-                    score += pointsPerRound;
+                    // Determine points for this round
+                    int pointsForRound = (roundNumber == 1) ? initialPoints : pointsPerRound;
+
+                    // Update the score and display it
+                    score += pointsForRound;
                     tvScore.setText("Score: " + score);
-                    // Play sound for level completion
+
+                    // Play sound to indicate the level is complete
                     soundLevelComplete.start();
                     Toast.makeText(TouchSequenceGameActivity.this, "Round complete!", Toast.LENGTH_SHORT).show();
-                    // Start a new round after the sound finishes
+
+                    // Start a new round after the sound is done
                     soundLevelComplete.setOnCompletionListener(mp -> startNewRound());
                 }
             } else {
-                // Play sound for a wrong answer
+                // Play sound for a wrong move
                 soundWrongAnswer.start();
                 soundWrongAnswer.setOnCompletionListener(mp -> {
-                    // Play game over sound
+                    // Play sound for game over
                     soundGameOver.start();
                     soundGameOver.setOnCompletionListener(mp1 -> {
-                        // Start the GameOverActivity and pass the score
+                        // Show the game over screen with the final score
                         Intent intent = new Intent(TouchSequenceGameActivity.this, GameOverActivity.class);
                         intent.putExtra("score", score);
                         startActivity(intent);
