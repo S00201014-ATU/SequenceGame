@@ -2,11 +2,13 @@ package com.example.sequencegame2024;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,77 +16,100 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GameOverActivity extends AppCompatActivity {
 
-    // Variable to hold the player's score
     private int score;
-    // Helper to manage database creation and version management
     private DatabaseHelper dbHelper;
-    // Reference to the SQLite database
     private SQLiteDatabase db;
+
+    private Button saveScoreButton;
+    private EditText nameInput;
+    private LinearLayout playAgainLayout;
+    private LinearLayout scoreInputLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
 
-        // Create a new DatabaseHelper instance
+        // Initialise the database helper and writable database
         dbHelper = new DatabaseHelper(this);
-        // Get a writable database
         db = dbHelper.getWritableDatabase();
 
-        // Get the score from the Intent
+        // Get the score from the intent that started this activity
         score = getIntent().getIntExtra("score", 0);
 
-        // Find the TextView for displaying the score
+        // Find the TextView to display the score and set its text
         TextView scoreView = findViewById(R.id.tvScore);
-        // Set the score text
         scoreView.setText("Your Score: " + score);
 
-        // Find the Button for saving the score
-        Button saveScoreButton = findViewById(R.id.btnSaveScore);
-        saveScoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Call the method to save the high score when the button is clicked
-                saveHighScore();
-            }
+        // Find the views in the layout
+        saveScoreButton = findViewById(R.id.btnSaveScore);
+        nameInput = findViewById(R.id.etName);
+        playAgainLayout = findViewById(R.id.layoutPlayAgain);
+        scoreInputLayout = findViewById(R.id.layoutScoreInput);
+
+        // Check if the score is in the top five and show/hide the input layout
+        if (isTopFiveScore(score)) {
+            scoreInputLayout.setVisibility(View.VISIBLE);
+            // Set up the button to save the high score
+            saveScoreButton.setOnClickListener(v -> saveHighScore());
+        } else {
+            scoreInputLayout.setVisibility(View.GONE);
+        }
+
+        // Set up the button to start a new game
+        Button playAgainButton = findViewById(R.id.btnPlayAgain);
+        playAgainButton.setOnClickListener(v -> {
+            Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Close this activity
         });
     }
 
     private void saveHighScore() {
-        // Find the EditText for entering the player's name
-        EditText nameInput = findViewById(R.id.etName);
-        // Get the name from the EditText
+        // Get the player's name from the input field
         String playerName = nameInput.getText().toString().trim();
 
-        // Check if the name is empty
+        // Check if the name is empty or contains numbers
         if (playerName.isEmpty()) {
-            // Show a message if the name is empty
             Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check if the name contains numbers
         if (playerName.matches(".*\\d.*")) {
-            // Show a message if the name contains numbers
             Toast.makeText(this, "No numbers allowed in name", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create a new ContentValues object
+        // Insert the name and score into the database
         ContentValues values = new ContentValues();
-        // Add the player's name to the ContentValues
         values.put(DatabaseHelper.COLUMN_NAME, playerName);
-        // Add the score to the ContentValues
         values.put(DatabaseHelper.COLUMN_SCORE, score);
 
-        // Insert the values into the high scores table
         db.insert(DatabaseHelper.TABLE_HIGHSCORES, null, values);
 
-        // Create an Intent to start the HighScoresActivity
+        // Start the HighScoresActivity to show the updated high scores
         Intent intent = new Intent(GameOverActivity.this, HighScoresActivity.class);
-        // Start the HighScoresActivity
         startActivity(intent);
-        // Finish the current activity
-        finish();
+        finish(); // Close this activity
+    }
+
+    private boolean isTopFiveScore(int score) {
+        // Query the database for the top scores
+        Cursor cursor = db.query(DatabaseHelper.TABLE_HIGHSCORES, null, null, null, null, null,
+                DatabaseHelper.COLUMN_SCORE + " DESC, " + DatabaseHelper.COLUMN_NAME + " ASC");
+        boolean isTopFive = false;
+        int count = 0;
+
+        // Check if the current score is in the top five
+        while (cursor.moveToNext() && count < 5) {
+            int highScore = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE));
+            if (score >= highScore) {
+                isTopFive = true;
+                break;
+            }
+            count++;
+        }
+        cursor.close();
+        return isTopFive;
     }
 }
