@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -53,7 +54,21 @@ public class GameOverActivity extends AppCompatActivity {
         // Find the EditText for entering the player's name
         EditText nameInput = findViewById(R.id.etName);
         // Get the name from the EditText
-        String playerName = nameInput.getText().toString();
+        String playerName = nameInput.getText().toString().trim();
+
+        // Check if the name is empty
+        if (playerName.isEmpty()) {
+            // Show a message if the name is empty
+            Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if the name contains numbers
+        if (playerName.matches(".*\\d.*")) {
+            // Show a message if the name contains numbers
+            Toast.makeText(this, "No numbers allowed in name", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Create a new ContentValues object
         ContentValues values = new ContentValues();
