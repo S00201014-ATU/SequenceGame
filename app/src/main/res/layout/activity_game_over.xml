@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:hint="Enter your name"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:visibility="gone"/>
 
     <!-- Container for buttons -->
     <LinearLayout
@@ -21,15 +22,16 @@
         android:layout_below="@id/etName"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        android:visibility="gone">
 
         <!-- Button to save score -->
         <Button
-            android:id="@+id/btnSaveScore"
+            android:id="@+id/btnViewHighScores"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Save Score" />
+            android:text="View High Scores" />
 
         <!-- Button to play again -->
         <Button
@@ -39,6 +41,15 @@
             android:layout_marginStart="8dp"
             android:text="Play Again" />
     </LinearLayout>
+
+    <!-- Centered Button for play again when score is not top 5 -->
+    <Button
+        android:id="@+id/btnPlayAgainCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Play Again"
+        android:visibility="gone" />
 
     <!-- TextView to show the score, positioned at the top -->
     <TextView

@@ -20,8 +20,9 @@ public class GameOverActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
 
-    private Button saveScoreButton;
+    private Button goToHighScores;
     private Button playAgainButton;
+    private Button playAgainCenterButton;
     private EditText nameInput;
 
     @Override
@@ -38,30 +39,40 @@ public class GameOverActivity extends AppCompatActivity {
 
         // Find the TextView to display the score and set its text
         TextView scoreView = findViewById(R.id.tvScore);
-        scoreView.setText("Your Score: " + score);
+        scoreView.setText("Your Score Was " + score);
 
         // Find the views in the layout
-        saveScoreButton = findViewById(R.id.btnSaveScore);
+        goToHighScores = findViewById(R.id.btnViewHighScores);
         playAgainButton = findViewById(R.id.btnPlayAgain);
+        playAgainCenterButton = findViewById(R.id.btnPlayAgainCenter);
         nameInput = findViewById(R.id.etName);
 
         // Check if the score is in the top five and show/hide the input layout
         if (isTopFiveScore(score)) {
             nameInput.setVisibility(View.VISIBLE);
-            saveScoreButton.setVisibility(View.VISIBLE);
+            findViewById(R.id.buttonContainer).setVisibility(View.VISIBLE);
+            playAgainCenterButton.setVisibility(View.GONE);
+
             // Set up the button to save the high score
-            saveScoreButton.setOnClickListener(v -> {
+            goToHighScores.setOnClickListener(v -> {
                 saveHighScore();
-                showHighScores();
+                showHighScores(true); // Pass true to indicate coming from GameOver
             });
         } else {
             nameInput.setVisibility(View.GONE);
-            saveScoreButton.setVisibility(View.GONE);
+            findViewById(R.id.buttonContainer).setVisibility(View.GONE);
+            playAgainCenterButton.setVisibility(View.VISIBLE);
         }
 
         // Set up the button to start a new game
         playAgainButton.setOnClickListener(v -> {
             saveHighScore();
+            Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // Close this activity
+        });
+
+        playAgainCenterButton.setOnClickListener(v -> {
             Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
             startActivity(intent);
             finish(); // Close this activity
@@ -88,7 +99,7 @@ public class GameOverActivity extends AppCompatActivity {
     private void validateNameInput() {
         String playerName = nameInput.getText().toString().trim();
         boolean isValid = !playerName.isEmpty() && !playerName.matches(".*\\d.*");
-        saveScoreButton.setEnabled(isValid);
+        goToHighScores.setEnabled(isValid);
         playAgainButton.setEnabled(isValid);
     }
 
@@ -109,9 +120,10 @@ public class GameOverActivity extends AppCompatActivity {
         db.insert(DatabaseHelper.TABLE_HIGHSCORES, null, values);
     }
 
-    private void showHighScores() {
+    private void showHighScores(boolean fromGameOver) {
         // Start the HighScoresActivity to show the updated high scores
         Intent intent = new Intent(GameOverActivity.this, HighScoresActivity.class);
+        intent.putExtra("FROM_GAME_OVER", fromGameOver);
         startActivity(intent);
         finish(); // Close this activity
     }
