@@ -66,6 +66,9 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
 
     // Starts a new round of the game
     private void startNewRound() {
+        // Disable the buttons while the sequence is being displayed
+        setButtonsEnabled(false);
+
         // Clear the player's sequence for the new round
         playerSequence.clear();
 
@@ -105,6 +108,9 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
 
                     // Show the next button after 1 second
                     handler.postDelayed(this, 1000);
+                } else {
+                    // Enable buttons after the sequence has been shown
+                    setButtonsEnabled(true);
                 }
             }
         }, 1000);
@@ -169,6 +175,9 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
                     soundLevelComplete.start();
                     Toast.makeText(TouchSequenceGameActivity.this, "Round complete!", Toast.LENGTH_SHORT).show();
 
+                    // Disable buttons while the sound is playing
+                    setButtonsEnabled(false);
+
                     // Start a new round after the sound is done
                     soundLevelComplete.setOnCompletionListener(mp -> startNewRound());
                 }
@@ -188,5 +197,13 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    // Enable or disable all buttons
+    private void setButtonsEnabled(boolean enabled) {
+        btnRed.setEnabled(enabled);
+        btnGreen.setEnabled(enabled);
+        btnBlue.setEnabled(enabled);
+        btnYellow.setEnabled(enabled);
     }
 }
