@@ -24,8 +24,8 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
-    private List<String> gameSequence = new ArrayList<>();
-    private List<String> playerSequence = new ArrayList<>();
+    private List<Integer> gameSequence = new ArrayList<>();
+    private List<Integer> playerSequence = new ArrayList<>();
     private int index = 0;
     private int score = 0;
     private Random random = new Random();
@@ -37,9 +37,13 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     private TextView tvScore;
     private ImageView circleRed, circleYellow, circleBlue, circleGreen;
     private boolean userTurn = false;
+    private boolean firstRound = true; // Flag to check if it's the first round
 
     private float[] initialCoordinates = new float[3];
     private SensorEvent lastSensorEvent;
+    private long lastLogTime = 0; // Timestamp for the last log
+    private long lastDirectionTime = 0; // Timestamp for the last direction detection
+    private static final long DIRECTION_DEBOUNCE_TIME = 500; // Debounce time in milliseconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +54,10 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         tvScore = findViewById(R.id.tvScore);
-        circleRed = findViewById(R.id.redUp);
-        circleYellow = findViewById(R.id.yellowDown);
-        circleBlue = findViewById(R.id.blueLeft);
-        circleGreen = findViewById(R.id.greenRight);
+        circleRed = findViewById(R.id.redCircle);
+        circleYellow = findViewById(R.id.yellowCircle);
+        circleBlue = findViewById(R.id.blueCircle);
+        circleGreen = findViewById(R.id.greenCircle);
 
         soundLevelComplete = MediaPlayer.create(this, R.raw.level_complete);
         soundWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
@@ -92,50 +96,54 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         float y = values[1];
         float z = values[2];
 
-        String direction = null;
-        float rotationThreshold = 5.0f; // Larger threshold for significant rotation
-        float returnThreshold = 1.5f; // Threshold for returning to initial position
+        Integer direction = null;
+        float movementThreshold = 2.0f; // Larger threshold for significant movement
+        float returnThreshold = 1.0f; // Threshold for returning to initial position
 
-        // Adjust for landscape mode
-        float adjustedX = -y;
-        float adjustedY = x;
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastLogTime > 1000) { // Log only if 1 second has passed
+            Log.d("SensorSequenceGame", "Accelerometer readings: x=" + x + ", y=" + y + ", z=" + z);
+            lastLogTime = currentTime;
+        }
 
-        Log.d("SensorSequenceGame", "Accelerometer readings: adjustedX=" + adjustedX + ", adjustedY=" + adjustedY + ", z=" + z);
-
-        // Detecting significant rotation
-        if (Math.abs(adjustedX) > rotationThreshold) {
-            direction = adjustedX > 0 ? "Left" : "Right";
-        } else if (Math.abs(adjustedY) > rotationThreshold) {
-            direction = adjustedY > 0 ? "Down" : "Up";
+        // Detecting significant lateral movement in landscape mode
+        if (Math.abs(x - initialCoordinates[0]) > movementThreshold) {
+            direction = x > initialCoordinates[0] ? 3 : 2; // In landscape mode, x-axis is Left (2)/Right (3)
+        } else if (Math.abs(y - initialCoordinates[1]) > movementThreshold) {
+            direction = y > initialCoordinates[1] ? 1 : 0; // In landscape mode, y-axis is Down (1)/Up (0)
         }
 
         Log.d("SensorSequenceGame", "Detected direction: " + direction);
 
-        // Check if the device is close to the initial position
-        if (Math.abs(adjustedX - initialCoordinates[0]) < returnThreshold &&
-                Math.abs(adjustedY - initialCoordinates[1]) < returnThreshold &&
-                Math.abs(z - initialCoordinates[2]) < returnThreshold && direction != null) {
-            Log.d("SensorSequenceGame", "Device returned to initial position. Registering direction: " + direction);
+        // Debounce mechanism to ensure stability in direction detection
+        if (direction != null && currentTime - lastDirectionTime > DIRECTION_DEBOUNCE_TIME) {
+            lastDirectionTime = currentTime;
+            highlightDirection(direction);
             handleDirectionInput(direction);
-        } else {
-            Log.d("SensorSequenceGame", "Device has not returned to initial position or no direction detected yet.");
         }
     }
 
-    private void handleDirectionInput(String direction) {
-        playerSequence.add(direction);
+    private void handleDirectionInput(int direction) {
+        playerMove(direction);
+    }
+
+    private void playerMove(int color) {
+        playerSequence.add(color);
         Log.d("SensorSequenceGame", "Player sequence: " + playerSequence);
 
         if (playerSequence.size() <= gameSequence.size()) {
             if (playerSequence.get(playerSequence.size() - 1).equals(gameSequence.get(playerSequence.size() - 1))) {
                 if (playerSequence.size() == gameSequence.size()) {
-                    score += 2;
+                    if (firstRound) {
+                        score += 4;
+                        firstRound = false;
+                    } else {
+                        score += 2;
+                    }
                     tvScore.setText("Score: " + score);
                     soundLevelComplete.start();
                     Toast.makeText(this, "Round complete!", Toast.LENGTH_SHORT).show();
                     soundLevelComplete.setOnCompletionListener(mp -> startNewRound());
-                } else {
-                    resetInitialCoordinates();
                 }
             } else {
                 soundWrongAnswer.start();
@@ -154,34 +162,28 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
 
     private void startNewRound() {
         playerSequence.clear();
-        gameSequence.clear();
 
-        for (int i = 0; i < 2; i++) {
-            gameSequence.add(randomDirection());
+        if (gameSequence.isEmpty()) {
+            for (int i = 0; i < 4; i++) {
+                gameSequence.add(random.nextInt(4));
+            }
+        } else {
+            for (int i = 0; i < 2; i++) {
+                gameSequence.add(random.nextInt(4));
+            }
         }
 
         Log.d("SensorSequenceGame", "Game sequence: " + gameSequence);
 
         resetInitialCoordinates();
-        showSequence();
+        playSequence();
     }
 
-    private String randomDirection() {
-        int rand = random.nextInt(4);
-        switch (rand) {
-            case 0: return "Up";
-            case 1: return "Down";
-            case 2: return "Left";
-            case 3: return "Right";
-            default: return null;
-        }
-    }
-
-    private void showSequence() {
+    private void playSequence() {
         userTurn = false;
         index = 0;
 
-        Runnable displayRunnable = new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (index < gameSequence.size()) {
@@ -190,27 +192,26 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
                     handler.postDelayed(this, 1000);
                 } else {
                     userTurn = true;
+                    Toast.makeText(SensorSequenceGameActivity.this, "Your turn to recall the sequence", Toast.LENGTH_SHORT).show();
                 }
             }
-        };
-
-        handler.post(displayRunnable);
+        }, 1000);
     }
 
-    private void highlightDirection(String direction) {
+    private void highlightDirection(int direction) {
         final ImageView arrowView;
 
         switch (direction) {
-            case "Up":
+            case 0:
                 arrowView = circleRed;
                 break;
-            case "Down":
+            case 1:
                 arrowView = circleYellow;
                 break;
-            case "Left":
+            case 2:
                 arrowView = circleBlue;
                 break;
-            case "Right":
+            case 3:
                 arrowView = circleGreen;
                 break;
             default:
@@ -224,12 +225,11 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     }
 
     private void resetInitialCoordinates() {
-        // Capture the current sensor values as the new initial position
         if (lastSensorEvent != null) {
-            initialCoordinates[0] = -lastSensorEvent.values[1]; // Adjust for landscape mode
-            initialCoordinates[1] = lastSensorEvent.values[0]; // Adjust for landscape mode
+            initialCoordinates[0] = lastSensorEvent.values[0];
+            initialCoordinates[1] = lastSensorEvent.values[1];
             initialCoordinates[2] = lastSensorEvent.values[2];
-            Log.d("SensorSequenceGame", "Initial coordinates set: adjustedX=" + initialCoordinates[0] + ", adjustedY=" + initialCoordinates[1] + ", z=" + initialCoordinates[2]);
+            Log.d("SensorSequenceGame", "Initial coordinates set: x=" + initialCoordinates[0] + ", y=" + initialCoordinates[1] + ", z=" + initialCoordinates[2]);
         }
     }
 

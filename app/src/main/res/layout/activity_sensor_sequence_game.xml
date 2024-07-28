@@ -14,42 +14,42 @@
         android:textColor="@android:color/black" />
 
     <ImageView
-        android:id="@+id/redUp"
+        android:id="@+id/blueCircle"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="50dp"
-        android:src="@drawable/red_circle"
-        android:contentDescription="Red Circle" />
+        android:src="@drawable/blue_circle"
+        android:contentDescription="Blue Circle" />
 
     <ImageView
-        android:id="@+id/yellowDown"
+        android:id="@+id/greenCircle"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
-        android:src="@drawable/yellow_circle"
-        android:contentDescription="Yellow Circle" />
+        android:src="@drawable/green_circle"
+        android:contentDescription="Green Circle" />
 
     <ImageView
-        android:id="@+id/blueLeft"
+        android:id="@+id/redCircle"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="50dp"
-        android:src="@drawable/blue_circle"
-        android:contentDescription="Blue Circle" />
+        android:src="@drawable/red_circle"
+        android:contentDescription="Red Circle" />
 
     <ImageView
-        android:id="@+id/greenRight"
+        android:id="@+id/yellowCircle"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="50dp"
-        android:src="@drawable/green_circle"
-        android:contentDescription="Green Circle" />
+        android:src="@drawable/yellow_circle"
+        android:contentDescription="Yellow Circle" />
 </RelativeLayout>

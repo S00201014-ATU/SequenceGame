@@ -37,23 +37,25 @@
             </intent-filter>
         </activity>
 
-        <!-- Additional activities -->
-        <activity
-            android:name=".TouchSequenceGameActivity"
-            android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
-
-        <activity
-            android:name=".HighScoresActivity"
-            android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
-
-        <activity
-            android:name=".GameOverActivity"
-            android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
-
+        <!-- Sensor Sequence Game Activity -->
         <activity
             android:name=".SensorSequenceGameActivity"
             android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
 
+        <!-- Touch Sequence Game Activity -->
+        <activity
+            android:name=".TouchSequenceGameActivity"
+            android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
+
+        <!-- High Scores Activity -->
+        <activity
+            android:name=".HighScoresActivity"
+            android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
+
+        <!-- Game Over Activity -->
+        <activity
+            android:name=".GameOverActivity"
+            android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
 
     </application>
 
