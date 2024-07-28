@@ -1,6 +1,5 @@
 package com.example.sequencegame2024;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,7 +11,9 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,8 @@ public class HighScoresActivity extends AppCompatActivity {
 
         int highestScore = highScores.isEmpty() ? 0 : highScores.get(0).getScore();
 
-        boolean isFromGameOver = getIntent().getBooleanExtra("FROM_GAME_OVER", false);
-        boolean isHighestScore = false;
+        boolean isNewTopScore = getIntent().getBooleanExtra("IS_NEW_TOP_SCORE", false);
+        boolean showCelebration = isNewTopScore && (highScores.size() > 0 && highScores.get(0).getScore() == highestScore);
         String highestScoreName = "";
         int highestScoreValue = 0;
 
@@ -53,14 +54,14 @@ public class HighScoresActivity extends AppCompatActivity {
             scoresLayout.addView(scoreView);
 
             // Check if this is the highest score
-            if (i == 0 && isFromGameOver) {
-                isHighestScore = true;
+            if (i == 0 && showCelebration) {
                 highestScoreName = highScore.getName();
                 highestScoreValue = highScore.getScore();
             }
         }
 
-        if (isHighestScore) {
+        // Only show celebratory effects if this is a new top score
+        if (showCelebration) {
             playCelebratoryMusic();
             flashText(highestScoreName, highestScoreValue);
         }
@@ -111,7 +112,7 @@ public class HighScoresActivity extends AppCompatActivity {
         flashTextView.setPadding(0, 20, 0, 20);
 
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(500); // You can manage the time of the blink with this parameter
+        anim.setDuration(500); // Manage the time of the blink with this parameter
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
         flashTextView.startAnimation(anim);

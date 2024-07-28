@@ -56,12 +56,16 @@ public class GameOverActivity extends AppCompatActivity {
             // Set up the button to save the high score
             goToHighScores.setOnClickListener(v -> {
                 saveHighScore();
-                showHighScores(true); // Pass true to indicate coming from GameOver
+                boolean isNewTopScore = isNewTopScore(score);
+                showHighScores(isNewTopScore); // Pass true or false based on the score
             });
         } else {
             nameInput.setVisibility(View.GONE);
             findViewById(R.id.buttonContainer).setVisibility(View.GONE);
             playAgainCenterButton.setVisibility(View.VISIBLE);
+
+            // Set up the button to go to high scores without saving
+            goToHighScores.setOnClickListener(v -> showHighScores(false));
         }
 
         // Set up the button to start a new game
@@ -120,10 +124,10 @@ public class GameOverActivity extends AppCompatActivity {
         db.insert(DatabaseHelper.TABLE_HIGHSCORES, null, values);
     }
 
-    private void showHighScores(boolean fromGameOver) {
+    private void showHighScores(boolean isNewTopScore) {
         // Start the HighScoresActivity to show the updated high scores
         Intent intent = new Intent(GameOverActivity.this, HighScoresActivity.class);
-        intent.putExtra("FROM_GAME_OVER", fromGameOver);
+        intent.putExtra("IS_NEW_TOP_SCORE", isNewTopScore);
         startActivity(intent);
         finish(); // Close this activity
     }
@@ -146,5 +150,19 @@ public class GameOverActivity extends AppCompatActivity {
         }
         cursor.close();
         return isTopFive;
+    }
+
+    private boolean isNewTopScore(int score) {
+        // Check if the current score is the top score
+        Cursor cursor = db.query(DatabaseHelper.TABLE_HIGHSCORES, null, null, null, null, null,
+                DatabaseHelper.COLUMN_SCORE + " DESC, " + DatabaseHelper.COLUMN_NAME + " ASC");
+        boolean isTopScore = false;
+
+        if (cursor.moveToFirst()) {
+            int topScore = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_SCORE));
+            isTopScore = (score > topScore);
+        }
+        cursor.close();
+        return isTopScore;
     }
 }
