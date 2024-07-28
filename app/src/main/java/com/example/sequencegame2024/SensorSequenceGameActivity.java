@@ -38,6 +38,7 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     private boolean userTurn = false;
 
     private float[] initialCoordinates = new float[3];
+    private SensorEvent lastSensorEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +49,11 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         tvScore = findViewById(R.id.tvScore);
-        arrowUp = findViewById(R.id.arrowUp);
-        arrowDown = findViewById(R.id.arrowDown);
-        arrowLeft = findViewById(R.id.arrowLeft);
-        arrowRight = findViewById(R.id.arrowRight);
+        arrowUp = findViewById(R.id.redUp);
+        arrowDown = findViewById(R.id.yellowDown);
+        arrowLeft = findViewById(R.id.blueLeft);
+        arrowRight = findViewById(R.id.greenRight);
 
-        // Initialize media players for sound effects
         soundLevelComplete = MediaPlayer.create(this, R.raw.level_complete);
         soundWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
         soundGameOver = MediaPlayer.create(this, R.raw.game_over);
@@ -76,37 +76,47 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (userTurn && event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            lastSensorEvent = event;
             handleAccelerometer(event.values);
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Implement if needed
     }
 
     private void handleAccelerometer(float[] values) {
-        float y = values[1] - initialCoordinates[1];
-        float z = values[2] - initialCoordinates[2];
+        float x = values[0];
+        float y = values[1];
+        float z = values[2];
 
         String direction = null;
+        float rotationThreshold = 5.0f; // Larger threshold for significant rotation
+        float returnThreshold = 1.5f; // Threshold for returning to initial position
 
-        if (Math.abs(y) > Math.abs(z)) {
-            if (y < -3) {
-                direction = "Right";
-            } else if (y > 3) {
+        // Detecting significant rotation
+        if (Math.abs(x) > rotationThreshold) {
+            if (x > 0) {
                 direction = "Left";
+            } else {
+                direction = "Right";
             }
-        } else {
-            if (z > 11) {
-                direction = "Up";
-            } else if (z < 9) {
+        } else if (Math.abs(y) > rotationThreshold) {
+            if (y > 0) {
                 direction = "Down";
+            } else {
+                direction = "Up";
             }
         }
 
-        if (direction != null) {
-            handleDirectionInput(direction);
+        // Check if the device is close to the initial position
+        if (Math.abs(values[0] - initialCoordinates[0]) < returnThreshold &&
+                Math.abs(values[1] - initialCoordinates[1]) < returnThreshold &&
+                Math.abs(values[2] - initialCoordinates[2]) < returnThreshold) {
+            if (direction != null && playerSequence.isEmpty()) {
+                // Register direction input only if the device is close to the initial position
+                handleDirectionInput(direction);
+            }
         }
     }
 
@@ -116,11 +126,14 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         if (playerSequence.size() <= gameSequence.size()) {
             if (playerSequence.get(playerSequence.size() - 1).equals(gameSequence.get(playerSequence.size() - 1))) {
                 if (playerSequence.size() == gameSequence.size()) {
-                    score += 2; // Points per round
+                    score += 2;
                     tvScore.setText("Score: " + score);
                     soundLevelComplete.start();
                     Toast.makeText(this, "Round complete!", Toast.LENGTH_SHORT).show();
                     soundLevelComplete.setOnCompletionListener(mp -> startNewRound());
+                } else {
+                    // Reset initial coordinates after each valid move
+                    resetInitialCoordinates();
                 }
             } else {
                 soundWrongAnswer.start();
@@ -140,15 +153,11 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     private void startNewRound() {
         playerSequence.clear();
 
-        // Add two new random directions to the game sequence
         for (int i = 0; i < 2; i++) {
             gameSequence.add(randomDirection());
         }
 
-        // Reset initial coordinates to the current position
         resetInitialCoordinates();
-
-        // Show the sequence to the player
         showSequence();
     }
 
@@ -175,7 +184,6 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
                     index++;
                     handler.postDelayed(this, 1000);
                 } else {
-                    tvScore.setText("Go!");
                     userTurn = true;
                 }
             }
@@ -207,19 +215,16 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
 
         if (arrowView != null) {
             arrowView.setColorFilter(Color.WHITE);
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    arrowView.clearColorFilter();
-                }
-            }, 500);
+            handler.postDelayed(() -> arrowView.clearColorFilter(), 500);
         }
     }
 
     private void resetInitialCoordinates() {
-        // The initial coordinates should be set to the current sensor values
-        initialCoordinates[0] = 0;
-        initialCoordinates[1] = 0;
-        initialCoordinates[2] = 0;
+        // Capture the current sensor values as the new initial position
+        if (lastSensorEvent != null) {
+            initialCoordinates[0] = lastSensorEvent.values[0];
+            initialCoordinates[1] = lastSensorEvent.values[1];
+            initialCoordinates[2] = lastSensorEvent.values[2];
+        }
     }
 }

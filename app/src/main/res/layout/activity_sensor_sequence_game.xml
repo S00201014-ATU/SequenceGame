@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/tvScore"
@@ -15,42 +14,42 @@
         android:textColor="@android:color/black" />
 
     <ImageView
-        android:id="@+id/arrowUp"
+        android:id="@+id/redUp"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/tvScore"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="50dp"
-        android:src="@drawable/arrow_up"
-        android:contentDescription="Up Arrow" />
+        android:src="@drawable/red_up"
+        android:contentDescription="Red Circle" />
 
     <ImageView
-        android:id="@+id/arrowDown"
+        android:id="@+id/yellowDown"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/arrowUp"
-        android:layout_marginTop="150dp"
-        android:src="@drawable/arrow_down"
-        android:contentDescription="Down Arrow" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/yellow_down"
+        android:contentDescription="Yellow Circle" />
 
     <ImageView
-        android:id="@+id/arrowLeft"
+        android:id="@+id/blueLeft"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_below="@id/tvScore"
-        android:layout_marginTop="100dp"
-        android:layout_toLeftOf="@id/arrowUp"
-        android:src="@drawable/arrow_left"
-        android:contentDescription="Left Arrow" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="50dp"
+        android:src="@drawable/blue_left"
+        android:contentDescription="Blue Circle" />
 
     <ImageView
-        android:id="@+id/arrowRight"
+        android:id="@+id/greenRight"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_below="@id/tvScore"
-        android:layout_marginTop="100dp"
-        android:layout_toRightOf="@id/arrowUp"
-        android:src="@drawable/arrow_right"
-        android:contentDescription="Right Arrow" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:src="@drawable/green_right"
+        android:contentDescription="Green Circle" />
 </RelativeLayout>

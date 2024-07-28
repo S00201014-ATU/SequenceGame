@@ -12,7 +12,6 @@
 
     <!-- Features for sensors -->
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
 
     <!-- Application-level configuration -->
     <application
@@ -54,6 +53,7 @@
         <activity
             android:name=".SensorSequenceGameActivity"
             android:screenOrientation="landscape" />  <!-- Forces the activity to display in landscape orientation -->
+
 
     </application>
 
