@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,9 +21,8 @@ public class GameOverActivity extends AppCompatActivity {
     private SQLiteDatabase db;
 
     private Button saveScoreButton;
+    private Button playAgainButton;
     private EditText nameInput;
-    private LinearLayout playAgainLayout;
-    private LinearLayout scoreInputLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,26 +42,54 @@ public class GameOverActivity extends AppCompatActivity {
 
         // Find the views in the layout
         saveScoreButton = findViewById(R.id.btnSaveScore);
+        playAgainButton = findViewById(R.id.btnPlayAgain);
         nameInput = findViewById(R.id.etName);
-        playAgainLayout = findViewById(R.id.layoutPlayAgain);
-        scoreInputLayout = findViewById(R.id.layoutScoreInput);
 
         // Check if the score is in the top five and show/hide the input layout
         if (isTopFiveScore(score)) {
-            scoreInputLayout.setVisibility(View.VISIBLE);
+            nameInput.setVisibility(View.VISIBLE);
+            saveScoreButton.setVisibility(View.VISIBLE);
             // Set up the button to save the high score
-            saveScoreButton.setOnClickListener(v -> saveHighScore());
+            saveScoreButton.setOnClickListener(v -> {
+                saveHighScore();
+                showHighScores();
+            });
         } else {
-            scoreInputLayout.setVisibility(View.GONE);
+            nameInput.setVisibility(View.GONE);
+            saveScoreButton.setVisibility(View.GONE);
         }
 
         // Set up the button to start a new game
-        Button playAgainButton = findViewById(R.id.btnPlayAgain);
         playAgainButton.setOnClickListener(v -> {
+            saveHighScore();
             Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
             startActivity(intent);
             finish(); // Close this activity
         });
+
+        // Add a TextWatcher to validate the name input
+        nameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                validateNameInput();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
+        // Initial validation
+        validateNameInput();
+    }
+
+    private void validateNameInput() {
+        String playerName = nameInput.getText().toString().trim();
+        boolean isValid = !playerName.isEmpty() && !playerName.matches(".*\\d.*");
+        saveScoreButton.setEnabled(isValid);
+        playAgainButton.setEnabled(isValid);
     }
 
     private void saveHighScore() {
@@ -70,13 +97,7 @@ public class GameOverActivity extends AppCompatActivity {
         String playerName = nameInput.getText().toString().trim();
 
         // Check if the name is empty or contains numbers
-        if (playerName.isEmpty()) {
-            Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (playerName.matches(".*\\d.*")) {
-            Toast.makeText(this, "No numbers allowed in name", Toast.LENGTH_SHORT).show();
+        if (playerName.isEmpty() || playerName.matches(".*\\d.*")) {
             return;
         }
 
@@ -86,7 +107,9 @@ public class GameOverActivity extends AppCompatActivity {
         values.put(DatabaseHelper.COLUMN_SCORE, score);
 
         db.insert(DatabaseHelper.TABLE_HIGHSCORES, null, values);
+    }
 
+    private void showHighScores() {
         // Start the HighScoresActivity to show the updated high scores
         Intent intent = new Intent(GameOverActivity.this, HighScoresActivity.class);
         startActivity(intent);
