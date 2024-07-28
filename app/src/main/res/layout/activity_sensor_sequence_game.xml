@@ -20,7 +20,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="50dp"
-        android:src="@drawable/red_up"
+        android:src="@drawable/red_circle"
         android:contentDescription="Red Circle" />
 
     <ImageView
@@ -30,7 +30,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
-        android:src="@drawable/yellow_down"
+        android:src="@drawable/yellow_circle"
         android:contentDescription="Yellow Circle" />
 
     <ImageView
@@ -40,7 +40,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="50dp"
-        android:src="@drawable/blue_left"
+        android:src="@drawable/blue_circle"
         android:contentDescription="Blue Circle" />
 
     <ImageView
@@ -50,6 +50,6 @@
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="50dp"
-        android:src="@drawable/green_right"
+        android:src="@drawable/green_circle"
         android:contentDescription="Green Circle" />
 </RelativeLayout>
