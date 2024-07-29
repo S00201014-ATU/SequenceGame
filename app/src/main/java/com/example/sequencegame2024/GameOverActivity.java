@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,8 @@ public class GameOverActivity extends AppCompatActivity {
     private Button playAgainButton;
     private Button playAgainCenterButton;
     private EditText nameInput;
+    private LinearLayout buttonContainerHigh;
+    private LinearLayout buttonContainerLow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +46,17 @@ public class GameOverActivity extends AppCompatActivity {
 
         // Find the views in the layout
         goToHighScores = findViewById(R.id.btnViewHighScores);
-        playAgainButton = findViewById(R.id.btnPlayAgain);
-        playAgainCenterButton = findViewById(R.id.btnPlayAgainCenter);
+        playAgainButton = findViewById(R.id.btnPlayAgainHigh);
+        playAgainCenterButton = findViewById(R.id.btnPlayAgainLow);
         nameInput = findViewById(R.id.etName);
+        buttonContainerHigh = findViewById(R.id.buttonContainerHigh);
+        buttonContainerLow = findViewById(R.id.buttonContainerLow);
 
         // Check if the score is in the top five and show/hide the input layout
         if (isTopFiveScore(score)) {
             nameInput.setVisibility(View.VISIBLE);
-            findViewById(R.id.buttonContainer).setVisibility(View.VISIBLE);
-            playAgainCenterButton.setVisibility(View.GONE);
+            buttonContainerHigh.setVisibility(View.VISIBLE);
+            buttonContainerLow.setVisibility(View.GONE);
 
             // Set up the button to save the high score
             goToHighScores.setOnClickListener(v -> {
@@ -61,8 +66,8 @@ public class GameOverActivity extends AppCompatActivity {
             });
         } else {
             nameInput.setVisibility(View.GONE);
-            findViewById(R.id.buttonContainer).setVisibility(View.GONE);
-            playAgainCenterButton.setVisibility(View.VISIBLE);
+            buttonContainerHigh.setVisibility(View.GONE);
+            buttonContainerLow.setVisibility(View.VISIBLE);
 
             // Set up the button to go to high scores without saving
             goToHighScores.setOnClickListener(v -> showHighScores(false));

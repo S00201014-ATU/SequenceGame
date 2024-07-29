@@ -4,53 +4,6 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Centered EditText for entering name -->
-    <EditText
-        android:id="@+id/etName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:hint="Enter your name"
-        android:textAlignment="center"
-        android:visibility="gone"/>
-
-    <!-- Container for buttons -->
-    <LinearLayout
-        android:id="@+id/buttonContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/etName"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        android:visibility="gone">
-
-        <!-- Button to save score -->
-        <Button
-            android:id="@+id/btnViewHighScores"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="View High Scores" />
-
-        <!-- Button to play again -->
-        <Button
-            android:id="@+id/btnPlayAgain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Play Again" />
-    </LinearLayout>
-
-    <!-- Centered Button for play again when score is not top 5 -->
-    <Button
-        android:id="@+id/btnPlayAgainCenter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Play Again"
-        android:visibility="gone" />
-
     <!-- TextView to show the score, positioned at the top -->
     <TextView
         android:id="@+id/tvScore"
@@ -59,4 +12,71 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textSize="24sp" />
+
+    <!-- Centered EditText for entering name -->
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvScore"
+        android:layout_marginTop="16dp"
+        android:hint="Enter your name"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+    <!-- Buttons for high score scenario -->
+    <LinearLayout
+        android:id="@+id/buttonContainerHigh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/etName"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Button to play again when score is high -->
+        <Button
+            android:id="@+id/btnPlayAgainHigh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Play Again" />
+
+        <!-- Button to view high scores -->
+        <Button
+            android:id="@+id/btnViewHighScores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View High Scores" />
+    </LinearLayout>
+
+    <!-- Buttons for low score scenario -->
+    <LinearLayout
+        android:id="@+id/buttonContainerLow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/etName"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Button to play again when score is low -->
+        <Button
+            android:id="@+id/btnPlayAgainLow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Play Again" />
+
+        <!-- Button to view low scores -->
+        <Button
+            android:id="@+id/btnViewScoresLow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View High Scores" />
+    </LinearLayout>
+
 </RelativeLayout>
