@@ -111,6 +111,7 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
                 } else {
                     // Enable buttons after the sequence has been shown
                     setButtonsEnabled(true);
+                    Toast.makeText(TouchSequenceGameActivity.this, "Your turn!", Toast.LENGTH_SHORT).show(); // Show Toast message
                 }
             }
         }, 1000);
