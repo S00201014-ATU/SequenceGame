@@ -24,6 +24,7 @@ public class GameOverActivity extends AppCompatActivity {
     private Button goToHighScores;
     private Button playAgainButton;
     private Button playAgainCenterButton;
+    private Button viewLowScoresButton;
     private EditText nameInput;
     private LinearLayout buttonContainerHigh;
     private LinearLayout buttonContainerLow;
@@ -48,6 +49,7 @@ public class GameOverActivity extends AppCompatActivity {
         goToHighScores = findViewById(R.id.btnViewHighScores);
         playAgainButton = findViewById(R.id.btnPlayAgainHigh);
         playAgainCenterButton = findViewById(R.id.btnPlayAgainLow);
+        viewLowScoresButton = findViewById(R.id.btnViewScoresLow);
         nameInput = findViewById(R.id.etName);
         buttonContainerHigh = findViewById(R.id.buttonContainerHigh);
         buttonContainerLow = findViewById(R.id.buttonContainerLow);
@@ -64,28 +66,30 @@ public class GameOverActivity extends AppCompatActivity {
                 boolean isNewTopScore = isNewTopScore(score);
                 showHighScores(isNewTopScore); // Pass true or false based on the score
             });
+
+            // Set up the button to start a new game
+            playAgainButton.setOnClickListener(v -> {
+                saveHighScore();
+                Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // Close this activity
+            });
+
         } else {
             nameInput.setVisibility(View.GONE);
             buttonContainerHigh.setVisibility(View.GONE);
             buttonContainerLow.setVisibility(View.VISIBLE);
 
-            // Set up the button to go to high scores without saving
-            goToHighScores.setOnClickListener(v -> showHighScores(false));
+            // Set up the button to view low scores
+            viewLowScoresButton.setOnClickListener(v -> showHighScores(false)); // Pass false as score is not a top score
+
+            // Set up the button to start a new game
+            playAgainCenterButton.setOnClickListener(v -> {
+                Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // Close this activity
+            });
         }
-
-        // Set up the button to start a new game
-        playAgainButton.setOnClickListener(v -> {
-            saveHighScore();
-            Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // Close this activity
-        });
-
-        playAgainCenterButton.setOnClickListener(v -> {
-            Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // Close this activity
-        });
 
         // Add a TextWatcher to validate the name input
         nameInput.addTextChangedListener(new TextWatcher() {
