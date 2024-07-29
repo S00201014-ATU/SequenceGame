@@ -38,8 +38,10 @@ public class GameOverActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         db = dbHelper.getWritableDatabase();
 
-        // Get the score from the intent that started this activity
+        // Get the score and game mode  from the intent that started this activity
         score = getIntent().getIntExtra("score", 0);
+        String gameType = getIntent().getStringExtra("gameType");
+
 
         // Find the TextView to display the score and set its text
         TextView scoreView = findViewById(R.id.tvScore);
@@ -67,10 +69,17 @@ public class GameOverActivity extends AppCompatActivity {
                 showHighScores(isNewTopScore); // Pass true or false based on the score
             });
 
+
+
             // Set up the button to start a new game
             playAgainButton.setOnClickListener(v -> {
                 saveHighScore();
-                Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
+                Intent intent;
+                if ("sensor".equals(gameType)) {
+                    intent = new Intent(GameOverActivity.this, SensorSequenceGameActivity.class);
+                } else {
+                    intent = new Intent(GameOverActivity.this, TouchSequenceGameActivity.class);
+                }
                 startActivity(intent);
                 finish(); // Close this activity
             });
@@ -85,7 +94,13 @@ public class GameOverActivity extends AppCompatActivity {
 
             // Set up the button to start a new game
             playAgainCenterButton.setOnClickListener(v -> {
-                Intent intent = new Intent(GameOverActivity.this, MainActivity.class);
+                saveHighScore();
+                Intent intent;
+                if ("sensor".equals(gameType)) {
+                    intent = new Intent(GameOverActivity.this, SensorSequenceGameActivity.class);
+                } else {
+                    intent = new Intent(GameOverActivity.this, TouchSequenceGameActivity.class);
+                }
                 startActivity(intent);
                 finish(); // Close this activity
             });

@@ -189,10 +189,7 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
                     soundGameOver.start();
                     soundGameOver.setOnCompletionListener(mp1 -> {
                         // Show the game over screen with the final score
-                        Intent intent = new Intent(TouchSequenceGameActivity.this, GameOverActivity.class);
-                        intent.putExtra("score", score);
-                        startActivity(intent);
-                        finish();
+                        navigateToGameOver();
                     });
                 });
             }
@@ -205,5 +202,13 @@ public class TouchSequenceGameActivity extends AppCompatActivity {
         btnGreen.setEnabled(enabled);
         btnBlue.setEnabled(enabled);
         btnYellow.setEnabled(enabled);
+    }
+
+    private void navigateToGameOver() {
+        Intent intent = new Intent(TouchSequenceGameActivity.this, GameOverActivity.class);
+        intent.putExtra("score", score);
+        intent.putExtra("gameType", "touch"); // Pass game type
+        startActivity(intent);
+        finish();
     }
 }

@@ -156,10 +156,7 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
                 soundWrongAnswer.setOnCompletionListener(mp -> {
                     soundGameOver.start(); // Play game over sound
                     soundGameOver.setOnCompletionListener(mp1 -> {
-                        Intent intent = new Intent(this, GameOverActivity.class); // Start Game Over activity
-                        intent.putExtra("score", score); // Pass the score
-                        startActivity(intent);
-                        finish();
+                        navigateToGameOver();
                     });
                 });
             }
@@ -251,5 +248,13 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         if (soundLevelComplete != null) soundLevelComplete.release(); // Release media player resources
         if (soundWrongAnswer != null) soundWrongAnswer.release(); // Release media player resources
         if (soundGameOver != null) soundGameOver.release(); // Release media player resources
+    }
+
+    private void navigateToGameOver() {
+        Intent intent = new Intent(SensorSequenceGameActivity.this, GameOverActivity.class);
+        intent.putExtra("score", score);
+        intent.putExtra("gameType", "sensor"); // Pass game type
+        startActivity(intent);
+        finish();
     }
 }
