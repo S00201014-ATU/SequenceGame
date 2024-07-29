@@ -24,26 +24,27 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
-    private List<Integer> gameSequence = new ArrayList<>();
-    private List<Integer> playerSequence = new ArrayList<>();
-    private int index = 0;
-    private int score = 0;
-    private Random random = new Random();
-    private Handler handler = new Handler();
-    private MediaPlayer soundLevelComplete;
-    private MediaPlayer soundWrongAnswer;
-    private MediaPlayer soundGameOver;
+    private List<Integer> gameSequence = new ArrayList<>(); // List to store the correct sequence of moves
+    private List<Integer> playerSequence = new ArrayList<>(); // List to store the player's moves
+    private int index = 0; // Keeps track of current position in the sequence
+    private int score = 0; // Player's score
+    private Random random = new Random(); // Used to generate random numbers
+    private Handler handler = new Handler(); // Used to handle timed tasks
+    private MediaPlayer soundLevelComplete; // Sound played when a level is completed
+    private MediaPlayer soundWrongAnswer; // Sound played when the player makes a wrong move
+    private MediaPlayer soundGameOver; // Sound played when the game is over
 
-    private TextView tvScore;
-    private ImageView circleRed, circleYellow, circleBlue, circleGreen;
-    private boolean userTurn = false;
-    private boolean firstRound = true; // Flag to check if it's the first round
+    private TextView tvScore; // TextView to show the score
+    private ImageView circleRed, circleYellow, circleBlue, circleGreen; // Circles representing different directions
+    private boolean userTurn = false; // Indicates if it is the player's turn
+    private boolean firstRound = true; // Checks if it's the first round
+    private boolean initialCoordinatesSet = false; // Checks if initial sensor coordinates are set
 
-    private float[] initialCoordinates = new float[3];
-    private SensorEvent lastSensorEvent;
-    private long lastLogTime = 0; // Timestamp for the last log
-    private long lastDirectionTime = 0; // Timestamp for the last direction detection
-    private static final long DIRECTION_DEBOUNCE_TIME = 500; // Debounce time in milliseconds
+    private float[] initialCoordinates = new float[3]; // Stores initial sensor coordinates
+    private SensorEvent lastSensorEvent; // Stores the last sensor event
+    private long lastLogTime = 0; // Time of the last log
+    private long lastDirectionTime = 0; // Time of the last direction detection
+    private static final long DIRECTION_DEBOUNCE_TIME = 500; // Time to debounce direction changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,32 +64,32 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         soundWrongAnswer = MediaPlayer.create(this, R.raw.wrong_answer);
         soundGameOver = MediaPlayer.create(this, R.raw.game_over);
 
-        startNewRound();
+        startNewRound(); // Start the first round of the game
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL); // Register the sensor listener
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        sensorManager.unregisterListener(this); // Unregister the sensor listener
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (userTurn && event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             lastSensorEvent = event;
-            handleAccelerometer(event.values);
+            handleAccelerometer(event.values); // Handle accelerometer data
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do nothing
+        // No action needed
     }
 
     private void handleAccelerometer(float[] values) {
@@ -97,34 +98,34 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         float z = values[2];
 
         Integer direction = null;
-        float movementThreshold = 2.0f; // Larger threshold for significant movement
-        float returnThreshold = 1.0f; // Threshold for returning to initial position
+        float movementThreshold = 2.0f; // Threshold for detecting significant movement
+        float returnThreshold = 1.0f; // Threshold for detecting return to initial position
 
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastLogTime > 1000) { // Log only if 1 second has passed
+        if (currentTime - lastLogTime > 1000) { // Log sensor data every second
             Log.d("SensorSequenceGame", "Accelerometer readings: x=" + x + ", y=" + y + ", z=" + z);
             lastLogTime = currentTime;
         }
 
-        // Detecting significant lateral movement in landscape mode
+        // Determine direction based on movement
         if (Math.abs(x - initialCoordinates[0]) > movementThreshold) {
-            direction = x > initialCoordinates[0] ? 3 : 2; // In landscape mode, x-axis is Left (2)/Right (3)
+            direction = x > initialCoordinates[0] ? 3 : 2; // Right or Left
         } else if (Math.abs(y - initialCoordinates[1]) > movementThreshold) {
-            direction = y > initialCoordinates[1] ? 1 : 0; // In landscape mode, y-axis is Down (1)/Up (0)
+            direction = y > initialCoordinates[1] ? 1 : 0; // Down or Up
         }
 
         Log.d("SensorSequenceGame", "Detected direction: " + direction);
 
-        // Debounce mechanism to ensure stability in direction detection
+        // Check if the direction is stable (debounce)
         if (direction != null && currentTime - lastDirectionTime > DIRECTION_DEBOUNCE_TIME) {
             lastDirectionTime = currentTime;
-            highlightDirection(direction);
-            handleDirectionInput(direction);
+            highlightDirection(direction); // Highlight the direction
+            handleDirectionInput(direction); // Handle player's input
         }
     }
 
     private void handleDirectionInput(int direction) {
-        playerMove(direction);
+        playerMove(direction); // Add the move to the player's sequence
     }
 
     private void playerMove(int color) {
@@ -140,23 +141,23 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
                     } else {
                         score += 2;
                     }
-                    tvScore.setText("Score: " + score);
-                    sensorManager.unregisterListener(this); // Unregister the sensor listener
-                    soundLevelComplete.start();
+                    tvScore.setText("Score: " + score); // Update the score
+                    sensorManager.unregisterListener(this); // Stop listening to the sensor
+                    soundLevelComplete.start(); // Play level complete sound
                     Toast.makeText(this, "Round complete!", Toast.LENGTH_SHORT).show();
                     soundLevelComplete.setOnCompletionListener(mp -> {
-                        sensorManager.registerListener(SensorSequenceGameActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-                        startNewRound();
+                        sensorManager.registerListener(SensorSequenceGameActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL); // Resume sensor listening
+                        startNewRound(); // Start the next round
                     });
                 }
             } else {
-                sensorManager.unregisterListener(this); // Unregister the sensor listener
-                soundWrongAnswer.start();
+                sensorManager.unregisterListener(this); // Stop listening to the sensor
+                soundWrongAnswer.start(); // Play wrong answer sound
                 soundWrongAnswer.setOnCompletionListener(mp -> {
-                    soundGameOver.start();
+                    soundGameOver.start(); // Play game over sound
                     soundGameOver.setOnCompletionListener(mp1 -> {
-                        Intent intent = new Intent(this, GameOverActivity.class);
-                        intent.putExtra("score", score);
+                        Intent intent = new Intent(this, GameOverActivity.class); // Start Game Over activity
+                        intent.putExtra("score", score); // Pass the score
                         startActivity(intent);
                         finish();
                     });
@@ -166,8 +167,9 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     }
 
     private void startNewRound() {
-        playerSequence.clear();
+        playerSequence.clear(); // Clear the player's sequence
 
+        // Generate a new sequence
         if (gameSequence.isEmpty()) {
             for (int i = 0; i < 4; i++) {
                 gameSequence.add(random.nextInt(4));
@@ -180,26 +182,29 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
 
         Log.d("SensorSequenceGame", "Game sequence: " + gameSequence);
 
-        resetInitialCoordinates();
-        playSequence();
+        if (!initialCoordinatesSet) {
+            resetInitialCoordinates(); // Set initial sensor coordinates
+            initialCoordinatesSet = true;
+        }
+        playSequence(); // Play the sequence for the player to follow
     }
 
     private void playSequence() {
-        userTurn = false;
-        sensorManager.unregisterListener(this); // Unregister the sensor listener
+        userTurn = false; // It's not the player's turn yet
+        sensorManager.unregisterListener(this); // Stop listening to the sensor
         index = 0;
 
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (index < gameSequence.size()) {
-                    highlightDirection(gameSequence.get(index));
+                    highlightDirection(gameSequence.get(index)); // Highlight the direction
                     index++;
-                    handler.postDelayed(this, 1000);
+                    handler.postDelayed(this, 1000); // Wait 1 second before showing the next direction
                 } else {
-                    userTurn = true;
+                    userTurn = true; // It's now the player's turn
                     Toast.makeText(SensorSequenceGameActivity.this, "Your turn!", Toast.LENGTH_SHORT).show();
-                    handler.postDelayed(() -> sensorManager.registerListener(SensorSequenceGameActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL), 2000); // Register the sensor listener after the toast message disappears
+                    handler.postDelayed(() -> sensorManager.registerListener(SensorSequenceGameActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL), 2000); // Resume sensor listening after 2 seconds
                 }
             }
         }, 1000);
@@ -226,8 +231,8 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
         }
 
         if (arrowView != null) {
-            arrowView.setColorFilter(Color.WHITE);
-            handler.postDelayed(() -> arrowView.clearColorFilter(), 500);
+            arrowView.setColorFilter(Color.WHITE); // Highlight the direction
+            handler.postDelayed(() -> arrowView.clearColorFilter(), 500); // Remove the highlight after 0.5 seconds
         }
     }
 
@@ -243,8 +248,8 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (soundLevelComplete != null) soundLevelComplete.release();
-        if (soundWrongAnswer != null) soundWrongAnswer.release();
-        if (soundGameOver != null) soundGameOver.release();
+        if (soundLevelComplete != null) soundLevelComplete.release(); // Release media player resources
+        if (soundWrongAnswer != null) soundWrongAnswer.release(); // Release media player resources
+        if (soundGameOver != null) soundGameOver.release(); // Release media player resources
     }
 }
