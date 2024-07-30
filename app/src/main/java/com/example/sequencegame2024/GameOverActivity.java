@@ -53,8 +53,8 @@ public class GameOverActivity extends AppCompatActivity {
         playAgainCenterButton = findViewById(R.id.btnPlayAgainLow);
         viewLowScoresButton = findViewById(R.id.btnViewScoresLow);
         nameInput = findViewById(R.id.etName);
-        buttonContainerHigh = findViewById(R.id.buttonContainerHigh);
-        buttonContainerLow = findViewById(R.id.buttonContainerLow);
+        buttonContainerHigh = findViewById(R.id.btnContainerHighScore);
+        buttonContainerLow = findViewById(R.id.btnContainerLowScore);
 
         // Check if the score is in the top five and show/hide the input layout
         if (isTopFiveScore(score)) {
