@@ -7,38 +7,39 @@
     android:gravity="center_horizontal">
 
     <!-- TextView to display the title of the screen -->
-<TextView
-android:id="@+id/tvTitle"
-android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="High Scores"
-    android:textSize="32sp"
-    android:textStyle="bold"
-    android:layout_marginBottom="20dp" />
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="High Scores"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp" />
 
     <!-- ScrollView to allow scrolling of high scores if they exceed the screen height -->
-<ScrollView
-android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <!-- LinearLayout to hold the list of high scores -->
-<LinearLayout
-android:id="@+id/layoutScores"
-android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
-    </LinearLayout>
+        <!-- LinearLayout to hold the list of high scores -->
+        <LinearLayout
+            android:id="@+id/layoutScores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+        </LinearLayout>
 
     </ScrollView>
 
     <!-- Button to navigate back to the home screen -->
-<Button
-android:id="@+id/btnHome"
-android:layout_width="match_parent"
+    <Button
+        android:id="@+id/btnHome"
+        android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="Home"
-    android:layout_marginTop="8dp" />
+    android:layout_marginTop="8dp"
+    android:layout_gravity="center_horizontal" />
 
-    </LinearLayout>
+</LinearLayout>

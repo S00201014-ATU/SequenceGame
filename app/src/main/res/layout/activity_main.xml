@@ -4,51 +4,54 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Container for centering buttons vertically in the parent layout -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:weightSum="4"
-        android:gravity="center">
+    <!-- Button to start the touch game -->
+    <Button
+        android:id="@+id/btnStartTouchGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:minWidth="200dp"
+        android:text="Start Touch Game"
+        android:onClick="startTouchGame" />
 
-        <!-- Button to start the touch game -->
-        <Button
-            android:id="@+id/btnStartTouchGame"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Start Touch Game"
-            android:onClick="startTouchGame" />
+    <!-- Button to start the rotate game -->
+    <Button
+        android:id="@+id/btnStartRotateGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStartTouchGame"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:minWidth="200dp"
+        android:text="Start Rotate Game"
+        android:onClick="startRotateGame" />
 
-        <!-- Button to start the rotate game -->
-        <Button
-            android:id="@+id/btnStartRotateGame"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Start Rotate Game"
-            android:onClick="startRotateGame" />
+    <!-- Button to view high scores -->
+    <Button
+        android:id="@+id/btnViewScores"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStartRotateGame"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:minWidth="200dp"
+        android:text="View High Scores"
+        android:onClick="viewScores" />
 
-        <!-- Button to view high scores -->
-        <Button
-            android:id="@+id/btnViewScores"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="View High Scores"
-            android:onClick="viewScores" />
-
-        <!-- Button to quit the app -->
-        <Button
-            android:id="@+id/btnQuit"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Quit"
-            android:onClick="btnQuit" />
-
-    </LinearLayout>
+    <!-- Button to quit the app -->
+    <Button
+        android:id="@+id/btnQuit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnViewScores"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:minWidth="200dp"
+        android:text="Quit"
+        android:onClick="btnQuit" />
 
 </RelativeLayout>
