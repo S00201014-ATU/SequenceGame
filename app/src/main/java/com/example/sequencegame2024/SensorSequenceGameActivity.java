@@ -197,16 +197,15 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
                 if (index < gameSequence.size()) {
                     highlightDirection(gameSequence.get(index)); // Highlight the direction
                     index++;
-                    handler.postDelayed(this, 500); // Wait 0.5 seconds before showing the next direction
+                    handler.postDelayed(this, 1000); // Wait 1 second before showing the next direction
                 } else {
                     userTurn = true; // It's now the player's turn
                     Toast.makeText(SensorSequenceGameActivity.this, "Your turn!", Toast.LENGTH_SHORT).show();
                     handler.postDelayed(() -> sensorManager.registerListener(SensorSequenceGameActivity.this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL), 2000); // Resume sensor listening after 2 seconds
                 }
             }
-        }, 500); // Start with a delay of 0.5 seconds
+        }, 1000);
     }
-
 
     private void highlightDirection(int direction) {
         final ImageView arrowView;
@@ -230,7 +229,7 @@ public class SensorSequenceGameActivity extends AppCompatActivity implements Sen
 
         if (arrowView != null) {
             arrowView.setColorFilter(Color.WHITE); // Highlight the direction
-            handler.postDelayed(() -> arrowView.clearColorFilter(), 250); // Remove the highlight after 0.25 seconds
+            handler.postDelayed(() -> arrowView.clearColorFilter(), 500); // Remove the highlight after 0.5 seconds
         }
     }
 
